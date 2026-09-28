@@ -57,51 +57,63 @@ public class SpreadBlock extends XenoBlock {
             addThis();
         }
         
-        protected void growing(float growx, float growy) {
-            Tile tile = Vars.world.tileWorld(growx, growy);
-            tile.setBlock(rootBlock, this.team);
-            dependList.add(new Pair<Building, Pair<Float, Float>>(tile.build, new Pair<Float, Float>(growx, growy)));
-            growPoint--;
-        }
-        
         protected void grow() {
             if(dependList.isEmpty()) return;
             
-            for(int i = 1; i <= growPoint; i = 1) {
-                int
-                index = Mathf.random(dependList.size()),
-                rot = Mathf.random(3);
+            for(int index = 0; index < dependList.size(); index++) {
+                Pair<Building, Pair<Float, Float>> pair = dependList.get(index);
                 
-                Building build = dependList.get(index).a;
-                int size = build.block.size;
-                
+                int size = pair.a.block.size;
                 float
                 minOffset = 4 * size,
-                maxOffset = 4 * (size + 2),
-                growx = this.x,
-                growy = this.y;
+                maxOffset = 4 * (size + 2);
                 
-                switch(rot) {
-                    case 0 -> {
-                        growx -= minOffset;
-                        break;
+                for(int i = 0; i < 4; i++) {
+                    if(growPoint < 1) return;
+                    switch(i) {
+                        case 0 -> {
+                            float growx = pair.a.x - minOffset;
+                            if(Check.validGrow(growx, pair.a.y)) {
+                                growPoint--;
+                                Tile tile = Vars.world.tileWorld(growx, pair.a.y);
+                                tile.setBlock(rootBlock, this.team);
+                                dependList.add(new Pair<Building, Pair<Float, Float>>(tile.build, new Pair<Float, Float>(growx, pair.a.y)));
+                                break;
+                            }
                         }
-                    case 1 -> {
-                        growx += maxOffset;
-                        break;
-                    }
-                    case 2 -> {
-                        growy -= minOffset;
-                        break;
-                    }
-                    case 3 -> {
-                        growy += maxOffset;
-                        break;
+                        case 1 -> {
+                            float growx = pair.a.x + maxOffset;
+                            if(Check.validGrow(growx, pair.a.y)) {
+                                growPoint--;
+                                Tile tile = Vars.world.tileWorld(growx, pair.a.y);
+                                tile.setBlock(rootBlock, this.team);
+                                dependList.add(new Pair<Building, Pair<Float, Float>>(tile.build, new Pair<Float, Float>(growx, pair.a.y)));
+                                break;
+                            }
+                        }
+                        case 2 -> {
+                            float growy = pair.a.y - minOffset;
+                            if(Check.validGrow(pair.a.x, growy)) {
+                                growPoint--;
+                                Tile tile = Vars.world.tileWorld(pair.a.x, growy);
+                                tile.setBlock(rootBlock, this.team);
+                                dependList.add(new Pair<Building, Pair<Float, Float>>(tile.build, new Pair<Float, Float>(pair.a.x, growy)));
+                                break;
+                            }
+                        }
+                        case 3 -> {
+                            float growy = pair.a.y + maxOffset;
+                            if(Check.validGrow(pair.a.x, growy)) {
+                                growPoint--;
+                                Tile tile = Vars.world.tileWorld(pair.a.x, growy);
+                                tile.setBlock(rootBlock, this.team);
+                                dependList.add(new Pair<Building, Pair<Float, Float>>(tile.build, new Pair<Float, Float>(pair.a.x, growy)));
+                                break;
+                            }
+                        }
                     }
                 }
-                if(Check.validGrow(growx, growy)) {
-                    growing(growx, growy);
-                }
+                if(growPoint < 1) return;
             }
         }
         
