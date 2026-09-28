@@ -44,11 +44,11 @@ public class SpreadBlock extends XenoBlock {
             for(int i = 0; i < dependList.size(); i++) {
                 if(dependList.get(i).a == this) {
                     dependList.remove(i);
-                    dependList.addFirst(new Pair<Building, Pair<Float, Float>>(this, new Pair<Float, Float>(this.x, this.y)));
-                    break;
+                    dependList.add(0, new Pair<Building, Pair<Float, Float>>(this, new Pair<Float, Float>(this.x, this.y)));
+                    return;
                 }
             }
-            dependList.addFirst(new Pair<Building, Pair<Float, Float>>(this, new Pair<Float, Float>(this.x, this.y)));
+            dependList.add(0, new Pair<Building, Pair<Float, Float>>(this, new Pair<Float, Float>(this.x, this.y)));
         }
         
         protected void grow() {
