@@ -3,7 +3,6 @@ package xean.world.xeno.spread;
 import java.util.ArrayList;
 import java.util.List;
 
-import arc.math.Mathf;
 import arc.struct.EnumSet;
 import arc.util.Nullable;
 import arc.util.Time;
@@ -60,9 +59,7 @@ public class SpreadBlock extends XenoBlock {
         protected void grow() {
             if(dependList.isEmpty()) return;
             
-            float gp = growPoint;
-            for(int j = 0; j < gp; j++) {
-                int index = Mathf.random(dependList.size());
+            for(int index = 0; index < dependList.size(); index++) {
                 Pair<Building, Pair<Float, Float>> pair = dependList.get(index);
                 
                 int size = pair.a.block.size;
