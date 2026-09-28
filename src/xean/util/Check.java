@@ -1,24 +1,22 @@
 package xean.util;
 
 import mindustry.Vars;
-import mindustry.content.Blocks;
 import mindustry.world.Tile;
-import mindustry.world.blocks.environment.Prop;
+import mindustry.world.blocks.environment.AirBlock;
+import mindustry.world.blocks.environment.StaticProp;
 
 public class Check {
     public static boolean range(float range, float fromx, float fromy, float tox, float toy) {
         float
-        radius = range * range,
-        length = (tox - fromx) + (toy - fromy);
-        return length <= radius;
+        length = (tox - fromx) + (toy - fromy),
+        length2 = length * length;
+        return length <= range;
     }
     
     public static boolean validGrow(float growx, float growy) {
         Tile tile = Vars.world.tileWorld(growx, growy);
-        if(tile.floor().isLiquid) return false;
-        if(tile.floor().isDeep()) return false;
-        if(tile.block() != Blocks.air) return false;
-        if(tile.block() instanceof Prop) return true;
+        if(tile.floor().isLiquid || tile.floor().isDeep()) return false;
+        if(tile.block() instanceof AirBlock || tile.block() instanceof StaticProp) return true;
         return false;
     }
 }
