@@ -1,23 +1,18 @@
-#the mod name as displayed in-game
-displayName: "Java Mod Template"
+name: crystallize
+displayName: Crystallize
 
-#the internal name of your mod
-name: "example-java-mod"
+description: ""
+subtile: ""
 
-#your name
-author: "You"
+author: "[#9B59D0[]]X[#B56BE8[]]e[#D86FEA[]]a[#FF69B4[]]n[[]]"
 
-#the fully qualified main class of the mod
-main: "example.ExampleJavaMod"
+version: "Beta"
+minGameVersion: 160
 
-#the mod description as seen in the mod dialog
-description: "A Mindustry Java mod template."
+hidden: false
+hideBrowser: false
 
-#the mod version
-version: 1.0.0
-
-#the minimum game build required to run this mod
-minGameVersion: 160.3
-
-#this is a java mod
 java: true
+main: xean.Crystallize
+
+dependencies: []
