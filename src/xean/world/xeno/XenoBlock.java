@@ -21,7 +21,6 @@ import mindustry.world.Block;
 import mindustry.world.Tile;
 import xean.util.Check;
 import xean.util.Pair;
-import xean.world.xeno.spread.SpreadBlock.SpreadBuild;
 
 public class XenoBlock extends Block {
     public XenoBlock(String name) {
@@ -55,7 +54,6 @@ public class XenoBlock extends Block {
     
     public class XenoBuild extends Building {
         private float spawnTimer;
-        public SpreadBuild owner;
         
         protected void explode() {
             if(!explodable) return;
@@ -77,7 +75,9 @@ public class XenoBlock extends Block {
         }
         
         protected void spawn() {
-            if(!spawnable && (miteUnit != null || miteType != null)) return;
+            if(!spawnable) return;
+            if(miteUnit == null) return;
+            if(miteType == null) return;
             
             UnitType unit;
             if(miteUnit == null) {
@@ -95,7 +95,10 @@ public class XenoBlock extends Block {
         }
         
         protected void deathSpawn() {
-            if(!deathSpawnable && (miteUnit != null || miteType != null) && mites > 0) return;
+            if(!deathSpawnable) return;
+            if(miteUnit == null) return;
+            if(miteType == null) return;
+            if(mites <= 0) return;
             
             UnitType unit;
             if(miteUnit == null) {
