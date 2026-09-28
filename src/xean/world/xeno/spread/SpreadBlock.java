@@ -38,20 +38,27 @@ public class SpreadBlock extends XenoBlock {
         
         public List<Pair<Building, Pair<Float, Float>>> dependList = new ArrayList<>();
         
+        protected void addThis() {
+            dependList.add(0, new Pair<Building, Pair<Float, Float>>(this, new Pair<Float, Float>(this.x, this.y)));
+        }
+        
         protected void selfAdd() {
+            if(dependList.isEmpty()) addThis();
             if(dependList.get(0).a == this) return;
             
             for(int i = 0; i < dependList.size(); i++) {
                 if(dependList.get(i).a == this) {
                     dependList.remove(i);
-                    dependList.add(0, new Pair<Building, Pair<Float, Float>>(this, new Pair<Float, Float>(this.x, this.y)));
+                    addThis();
                     return;
                 }
             }
-            dependList.add(0, new Pair<Building, Pair<Float, Float>>(this, new Pair<Float, Float>(this.x, this.y)));
+            addThis();
         }
         
         protected void grow() {
+            if(dependList.isEmpty()) return;
+            
             for(int index = 0; index < dependList.size(); index++) {
                 Pair<Building, Pair<Float, Float>> pair = dependList.get(index);
                 
@@ -156,13 +163,17 @@ public class SpreadBlock extends XenoBlock {
         }
         
         protected void killDepend() {
+            if(dependList.isEmpty()) return;
+            
             for(int i = 0; i < dependList.size(); i++) {
                 Building build  = dependList.get(i).a;
-                build.kill();
+                if(build != this) build.kill();
             }
         }
         
         protected void refresh() {
+            if(dependList.isEmpty()) return;
+            
             if(refreshTimer < 30) {
                 refreshTimer += Time.delta;
             }
@@ -200,7 +211,7 @@ public class SpreadBlock extends XenoBlock {
             write.f(growPoint);
             write.f(growTimer);
             write.f(refreshTimer);
-            write.i(dependList.size());
+            write.i(dependList.isEmpty() ? 0 : dependList.size());
             for(int i = 0; i < dependList.size(); i++) {
                 Pair<Building, Pair<Float, Float>> pair = dependList.get(i);
                 write.f(pair.b.a);
