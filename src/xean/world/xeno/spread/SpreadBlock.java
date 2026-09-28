@@ -63,7 +63,7 @@ public class SpreadBlock extends XenoBlock {
                 Pair<Building, Pair<Float, Float>> pair = dependList.get(index);
                 
                 int size = pair.a.block.size;
-                float offset = (size + 1) / 2;
+                float offset = (size + 1) * 4;
                 
                 for(int i = 0; i < 4; i++) {
                     if(growPoint < 1) return;
