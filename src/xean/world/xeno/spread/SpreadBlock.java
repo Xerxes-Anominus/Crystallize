@@ -67,7 +67,7 @@ public class SpreadBlock extends XenoBlock {
         protected void grow() {
             if(dependList.isEmpty()) return;
             
-            while(growPoint >= 1) {
+            for(int i = 1; i <= growPoint; i = 1) {
                 int
                 index = Mathf.random(dependList.size()),
                 rot = Mathf.random(3);
