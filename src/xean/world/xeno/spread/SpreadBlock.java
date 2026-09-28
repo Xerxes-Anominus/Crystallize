@@ -64,8 +64,8 @@ public class SpreadBlock extends XenoBlock {
                 
                 int size = pair.a.block.size;
                 float
-                minOffset = (size + 1) / 2,
-                maxOffset = (size + 2) / 2;
+                minOffset = 4 * (size + 1),
+                maxOffset = 4 * (size + 2);
                 
                 for(int i = 0; i < 4; i++) {
                     if(growPoint < 1) return;
