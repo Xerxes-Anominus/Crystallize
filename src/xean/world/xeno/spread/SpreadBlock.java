@@ -9,13 +9,13 @@ import arc.util.Time;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
 import mindustry.Vars;
-import mindustry.content.Blocks;
 import mindustry.entities.TargetPriority;
 import mindustry.game.Difficulty;
 import mindustry.gen.Building;
 import mindustry.world.Block;
 import mindustry.world.Tile;
 import mindustry.world.meta.BlockFlag;
+import xean.content.XenoBlocks;
 import xean.util.Check;
 import xean.util.Pair;
 import xean.world.xeno.XenoBlock;
@@ -27,7 +27,7 @@ public class SpreadBlock extends XenoBlock {
         priority = TargetPriority.core;
     }
     
-    public Block rootBlock = Blocks.copperWall;
+    public Block rootBlock = XenoBlocks.xenoRoot1;
     public int growCount = 4;
     
     public class SpreadBuild extends XenoBuild {
@@ -210,6 +210,7 @@ public class SpreadBlock extends XenoBlock {
             write.f(growTimer);
             write.f(refreshTimer);
             write.i(dependList.isEmpty() ? 0 : dependList.size());
+            if(dependList.isEmpty()) return;
             for(int i = 0; i < dependList.size(); i++) {
                 Pair<Building, Pair<Float, Float>> pair = dependList.get(i);
                 write.f(pair.b.a);
@@ -224,6 +225,7 @@ public class SpreadBlock extends XenoBlock {
             growTimer = read.f();
             refreshTimer = read.f();
             int size = read.i();
+            if(size == 0) return;
             for(int i = 0; i < size; i++) {
                 float x = read.f();
                 float y = read.f();
