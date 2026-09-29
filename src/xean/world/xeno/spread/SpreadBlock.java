@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import arc.struct.EnumSet;
-import arc.util.Nullable;
 import arc.util.Time;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
@@ -26,97 +25,71 @@ public class SpreadBlock extends XenoBlock {
         flags = EnumSet.of(BlockFlag.core);
         priority = TargetPriority.core;
     }
-    
+
     public Block rootBlock = XenoBlocks.xenoRoot1;
     public int growCount = 4;
-    
+
     public class SpreadBuild extends XenoBuild {
-        private float
-        growTimer, growPoint;
-        
+        private float growTimer, growPoint;
         private float refreshTimer;
-        
+
         public List<Pair<Building, Pair<Float, Float>>> dependList = new ArrayList<>();
         
+        private final List<Pair<Float, Float>> pending = new ArrayList<>();
+
+        private void addDepend(Building build, float x, float y) {
+            dependList.add(new Pair<Building, Pair<Float, Float>>(build, new Pair<Float, Float>(x, y)));
+        }
+
         protected void addThis() {
             dependList.add(0, new Pair<Building, Pair<Float, Float>>(this, new Pair<Float, Float>(this.x, this.y)));
         }
-        
+
         protected void selfAdd() {
-            if(dependList.isEmpty()) addThis();
-            if(dependList.get(0).a == this) return;
-            
-            for(int i = 0; i < dependList.size(); i++) {
-                if(dependList.get(i).a == this) {
-                    dependList.remove(i);
-                    addThis();
-                    return;
-                }
-            }
+            if(!dependList.isEmpty() && dependList.get(0).a == this) return;
+            dependList.removeIf(p -> p.a == this);
             addThis();
         }
-        
+
         protected void grow() {
             if(dependList.isEmpty()) return;
             
+            final int[] dx = {-1, 1, 0, 0};
+            final int[] dy = {0, 0, -1, 1};
+            
             for(int index = 0; index < dependList.size(); index++) {
-                Pair<Building, Pair<Float, Float>> pair = dependList.get(index);
-                
-                int size = pair.a.block.size;
-                float offset = (size + 1) * 4;
-                
+                if(growPoint < 1) return;
+
+                Building src = dependList.get(index).a;
+                if(src == null) continue;
+
+                float offset = (src.block.size + 1) * 4;
+
                 for(int i = 0; i < 4; i++) {
                     if(growPoint < 1) return;
-                    switch(i) {
-                        case 0 -> {
-                            float growx = pair.a.x - offset;
-                            if(Check.validGrow(growx, pair.a.y)) {
-                                growPoint--;
-                                Tile tile = Vars.world.tileWorld(growx, pair.a.y);
-                                tile.setBlock(rootBlock, this.team);
-                                dependList.add(new Pair<Building, Pair<Float, Float>>(tile.build, new Pair<Float, Float>(growx, pair.a.y)));
-                                break;
-                            }
-                        }
-                        case 1 -> {
-                            float growx = pair.a.x + offset;
-                            if(Check.validGrow(growx, pair.a.y)) {
-                                growPoint--;
-                                Tile tile = Vars.world.tileWorld(growx, pair.a.y);
-                                tile.setBlock(rootBlock, this.team);
-                                dependList.add(new Pair<Building, Pair<Float, Float>>(tile.build, new Pair<Float, Float>(growx, pair.a.y)));
-                                break;
-                            }
-                        }
-                        case 2 -> {
-                            float growy = pair.a.y - offset;
-                            if(Check.validGrow(pair.a.x, growy)) {
-                                growPoint--;
-                                Tile tile = Vars.world.tileWorld(pair.a.x, growy);
-                                tile.setBlock(rootBlock, this.team);
-                                dependList.add(new Pair<Building, Pair<Float, Float>>(tile.build, new Pair<Float, Float>(pair.a.x, growy)));
-                                break;
-                            }
-                        }
-                        case 3 -> {
-                            float growy = pair.a.y + offset;
-                            if(Check.validGrow(pair.a.x, growy)) {
-                                growPoint--;
-                                Tile tile = Vars.world.tileWorld(pair.a.x, growy);
-                                tile.setBlock(rootBlock, this.team);
-                                dependList.add(new Pair<Building, Pair<Float, Float>>(tile.build, new Pair<Float, Float>(pair.a.x, growy)));
-                                break;
-                            }
-                        }
-                    }
+
+                    float gx = src.x + dx[i] * offset;
+                    float gy = src.y + dy[i] * offset;
+
+                    if(!Check.validGrow(gx, gy)) continue;
+
+                    Tile tile = Vars.world.tileWorld(gx, gy);
+                    if(tile == null) continue;
+
+                    tile.setBlock(rootBlock, this.team);
+                    if(tile.build == null) continue;
+
+                    growPoint--;
+                    addDepend(tile.build, gx, gy);
                 }
-                if(growPoint < 1) return;
             }
         }
-        
+
         protected void growPoint() {
             float multi = 1.5f;
+
             Difficulty diff = Vars.state.rules.planet.campaignRules.difficulty;
+            
             switch(diff) {
                 case casual -> {
                     multi = 0.5f;
@@ -138,10 +111,14 @@ public class SpreadBlock extends XenoBlock {
                     multi = 4.0f;
                     break;
                 }
+                default -> {
+                    multi = 1.5f;
+                    break;
+                }
             }
             growPoint += growCount * multi;
         }
-        
+
         protected void grows() {
             if(growTimer >= 60) {
                 growTimer = 0;
@@ -151,74 +128,94 @@ public class SpreadBlock extends XenoBlock {
                 growTimer += Time.delta;
             }
         }
-        
+
         protected void restore(float x, float y) {
             Tile tile = Vars.world.tileWorld(x, y);
+            if(tile == null) return;
+
             Building build = tile.build;
-            if(build != null && build.team == this.team) {
-                dependList.add(new Pair<Building, Pair<Float, Float>>(build, new Pair<Float, Float>(x, y)));
+            if(build == null || build == this || build.team != this.team) return;
+
+            for(Pair<Building, Pair<Float, Float>> p : dependList) {
+                if(p.a == build) return;
             }
+            addDepend(build, x, y);
         }
-        
+
+        protected void restorePending() {
+            if(pending.isEmpty()) return;
+            for(Pair<Float, Float> p : pending) {
+                restore(p.a, p.b);
+            }
+            pending.clear();
+        }
+
         protected void killDepend() {
             if(dependList.isEmpty()) return;
             
-            for(int i = 0; i < dependList.size(); i++) {
-                Building build  = dependList.get(i).a;
-                if(build != this) build.kill();
+            List<Pair<Building, Pair<Float, Float>>> copy = new ArrayList<>(dependList);
+            dependList.clear();
+
+            for(Pair<Building, Pair<Float, Float>> p : copy) {
+                Building build = p.a;
+                if(build != null && build != this && !build.dead()) build.kill();
             }
         }
-        
+
         protected void refresh() {
             if(dependList.isEmpty()) return;
-            
-            if(refreshTimer < 30) {
-                refreshTimer += Time.delta;
-            }
+
+            refreshTimer += Time.delta;
+            if(refreshTimer < 30) return;
             refreshTimer = 0;
             
-            for(int i = 0; i < dependList.size(); i++) {
-                Building build = dependList.get(i).a;
-                Tile tile = Vars.world.tileWorld(dependList.get(i).b.a, dependList.get(i).b.b);
-                if(tile.build == build) {
-                    if(build.dead()) {
-                        dependList.remove(i);
-                        i = 0;
-                    }
-                }else{
+            for(int i = dependList.size() - 1; i >= 0; i--) {
+                Pair<Building, Pair<Float, Float>> p = dependList.get(i);
+                Building build = p.a;
+
+                if(build == this) continue;
+
+                if(build == null) {
+                    dependList.remove(i);
+                    continue;
+                }
+
+                Tile tile = Vars.world.tileWorld(p.b.a, p.b.b);
+                if(tile == null || tile.build != build || build.dead()) {
                     dependList.remove(i);
                 }
             }
         }
-        
+
         @Override
         public void updateTile() {
             super.updateTile();
+            restorePending();
             selfAdd();
-            grows();
+            if(!Vars.net.client()) grows();
             refresh();
         }
-        
+
         @Override
         public void killed() {
             super.killed();
             killDepend();
         }
-        
+
         @Override
         public void write(Writes write) {
             super.write(write);
             write.f(growPoint);
             write.f(growTimer);
             write.f(refreshTimer);
-            write.i(dependList.isEmpty() ? 0 : dependList.size());
+            write.i(dependList.size());
             for(int i = 0; i < dependList.size(); i++) {
                 Pair<Building, Pair<Float, Float>> pair = dependList.get(i);
                 write.f(pair.b.a);
                 write.f(pair.b.b);
             }
         }
-        
+
         @Override
         public void read(Reads read, byte revision) {
             super.read(read, revision);
@@ -226,10 +223,12 @@ public class SpreadBlock extends XenoBlock {
             growTimer = read.f();
             refreshTimer = read.f();
             int size = read.i();
+            pending.clear();
+            dependList.clear();
             for(int i = 0; i < size; i++) {
                 float x = read.f();
                 float y = read.f();
-                restore(x, y);
+                pending.add(new Pair<Float, Float>(x, y));
             }
         }
     }
