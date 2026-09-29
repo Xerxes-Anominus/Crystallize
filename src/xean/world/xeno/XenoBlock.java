@@ -26,6 +26,7 @@ public class XenoBlock extends Block {
     public XenoBlock(String name) {
         super(name);
         update = true;
+        createRubble = false;
     }
     
     public boolean
