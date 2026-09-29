@@ -18,6 +18,7 @@ import xean.content.XenoBlocks;
 import xean.util.Check;
 import xean.util.Pair;
 import xean.world.xeno.XenoBlock;
+import xean.world.xeno.root.RootBlock;
 
 public class SpreadBlock extends XenoBlock {
     public SpreadBlock(String name) {
@@ -39,6 +40,19 @@ public class SpreadBlock extends XenoBlock {
 
         private void addDepend(Building build, float x, float y) {
             dependList.add(new Pair<Building, Pair<Float, Float>>(build, new Pair<Float, Float>(x, y)));
+        }
+        
+        public void addDepend(Building build) {
+            if(build == null) return;
+            for(Pair<Building, Pair<Float, Float>> p : dependList) {
+                if(p.a == build) return;
+            }
+            addDepend(build, build.x, build.y);
+        }
+
+        public void removeDepend(Building build) {
+            if(build == this) return;
+            dependList.removeIf(p -> p.a == build);
         }
 
         protected void addThis() {
@@ -80,7 +94,9 @@ public class SpreadBlock extends XenoBlock {
                     if(tile.build == null) continue;
 
                     growPoint--;
-                    addDepend(tile.build, gx, gy);
+                    Building grown = tile.build;
+                    if(grown instanceof RootBlock.RootBuild) ((RootBlock.RootBuild) grown).owner = this;
+                    addDepend(grown, gx, gy);
                 }
             }
         }
@@ -88,34 +104,22 @@ public class SpreadBlock extends XenoBlock {
         protected void growPoint() {
             float multi = 1.5f;
 
-            Difficulty diff = Vars.state.rules.planet.campaignRules.difficulty;
-            
-            switch(diff) {
-                case casual -> {
-                    multi = 0.5f;
-                    break;
-                }
-                case easy -> {
-                    multi = 1.0f;
-                    break;
-                }
-                case normal -> {
-                    multi = 1.5f;
-                    break;
-                }
-                case hard -> {
-                    multi = 2.5f;
-                    break;
-                }
-                case eradication -> {
-                    multi = 4.0f;
-                    break;
-                }
-                default -> {
-                    multi = 1.5f;
-                    break;
-                }
+            Difficulty diff = null;
+            if(Vars.state.rules.planet != null && Vars.state.rules.planet.campaignRules != null) {
+                diff = Vars.state.rules.planet.campaignRules.difficulty;
             }
+
+            if(diff != null) {
+                multi = switch(diff) {
+                    case casual -> 0.5f;
+                    case easy -> 1.0f;
+                    case normal -> 1.5f;
+                    case hard -> 2.5f;
+                    case eradication -> 4.0f;
+                    default -> 1.5f;
+                };
+            }
+
             growPoint += growCount * multi;
         }
 
@@ -139,6 +143,7 @@ public class SpreadBlock extends XenoBlock {
             for(Pair<Building, Pair<Float, Float>> p : dependList) {
                 if(p.a == build) return;
             }
+            if(build instanceof RootBlock.RootBuild) ((RootBlock.RootBuild) build).owner = this;
             addDepend(build, x, y);
         }
 
