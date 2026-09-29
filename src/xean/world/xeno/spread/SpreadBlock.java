@@ -185,6 +185,8 @@ public class SpreadBlock extends XenoBlock {
                         dependList.remove(i);
                         i = 0;
                     }
+                }else{
+                    dependList.remove(i);
                 }
             }
         }
@@ -210,7 +212,6 @@ public class SpreadBlock extends XenoBlock {
             write.f(growTimer);
             write.f(refreshTimer);
             write.i(dependList.isEmpty() ? 0 : dependList.size());
-            if(dependList.isEmpty()) return;
             for(int i = 0; i < dependList.size(); i++) {
                 Pair<Building, Pair<Float, Float>> pair = dependList.get(i);
                 write.f(pair.b.a);
@@ -225,7 +226,6 @@ public class SpreadBlock extends XenoBlock {
             growTimer = read.f();
             refreshTimer = read.f();
             int size = read.i();
-            if(size == 0) return;
             for(int i = 0; i < size; i++) {
                 float x = read.f();
                 float y = read.f();
