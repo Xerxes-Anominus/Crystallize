@@ -28,8 +28,6 @@ public class RootBlock extends XenoBlock {
     public int growDistance = 3;
 
     public class RootBuild extends XenoBuild {
-        public SpreadBuild owner;
-
         private float growTimer, growTime = Mathf.random(minGrowTime, maxGrowTime);
         
         protected boolean canGrow(Block block, int x0, int y0) {

@@ -46,21 +46,13 @@ public class SpreadBlock extends XenoBlock {
         public void add(Building build, float x, float y) {
             Tile tile = Vars.world.tileWorld(x, y);
             if(tile == null) return;
-            if(!(tile.build instanceof Building) && tile.build != build) return;
+            if(tile.build != build) return;
             dependList.add(new Pair<Building, Pair<Float, Float>>(build, new Pair<Float, Float>(x, y)));
         }
         
         protected void selfAdd() {
-            if(!dependList.isEmpty()) selfAdd(0);
-            if(dependList.get(0).a != this) {
-                for(int index = dependList.size() - 1; index >= 0; index--) {
-                    if(dependList.get(index).a == this) {
-                        dependList.remove(index);
-                        selfAdd(0);
-                        return;
-                    }
-                }
-            }
+            if(!dependList.isEmpty() && dependList.get(0).a == this) return;
+            dependList.removeIf(p -> p.a == this);
             selfAdd(0);
         }
         
@@ -74,12 +66,9 @@ public class SpreadBlock extends XenoBlock {
         }
         
         protected boolean validGrow(float x, float y) {
-            Tile tile = Vars.world.tileWorld(x, y);
-            if(tile == null) return false;
-            if(tile.floor().isLiquid || tile.floor().isDeep()) return false;
-            if(!(tile.block() instanceof AirBlock)) return false;
-            if(!(tile.block() instanceof StaticProp)) return false;
-            return true;
+            Tile t = Vars.world.tileWorld(x, y);
+            return t != null && t.build == null && t.block() == Blocks.air
+            && !t.floor().isLiquid && !t.floor().isDeep();
         }
         
         protected void grow() {
@@ -100,7 +89,7 @@ public class SpreadBlock extends XenoBlock {
                     
                     float
                     gx = build.x + dx[i] * offset,
-                    gy = build.y + dy[1] * offset;
+                    gy = build.y + dy[i] * offset;
                     
                     if(validGrow(gx, gy)) continue;
                     
@@ -211,7 +200,7 @@ public class SpreadBlock extends XenoBlock {
             super.updateTile();
             restorePending();
             selfAdd();
-            if(Vars.net.client()) grows();
+            if(!Vars.net.client()) grows();
             refresh();
         }
         
