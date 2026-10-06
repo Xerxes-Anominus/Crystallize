@@ -67,7 +67,7 @@ public class SpreadBlock extends XenoBlock {
         
         protected boolean validGrow(float x, float y) {
             Tile t = Vars.world.tileWorld(x, y);
-            return t != null && t.build == null && t.block() == Blocks.air
+            return t != null && t.build == null && t.block() instanceof AirBlock
             && !t.floor().isLiquid && !t.floor().isDeep();
         }
         
