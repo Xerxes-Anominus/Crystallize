@@ -84,7 +84,7 @@ public class RootBlock extends XenoBlock {
 
             if(!canGrow(block, x0, y0)) return;
 
-            Building o = owner;
+            SpreadBuild o = (SpreadBuild)owner;
             
             for(int dx = 0; dx < size; dx++) {
                 for(int dy = 0; dy < size; dy++) {
