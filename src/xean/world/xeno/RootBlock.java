@@ -100,7 +100,7 @@ public class RootBlock extends XenoBlock {
             origin.setBlock(block, this.team);
 
             if(origin.build != null) {
-                o.add(origin.build, origin.x, origin.y);
+                o.add(origin.build, origin.x * 8f, origin.y * 8f);
             }
         }
 

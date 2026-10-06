@@ -45,7 +45,7 @@ public class SpreadBlock extends XenoBlock {
         
         public void add(Building build, float x, float y) {
             Tile tile = Vars.world.tileWorld(x, y);
-            if(tile == null) return;
+            if(tile == null || build == null) return;
             if(tile.build != build) return;
             dependList.add(new Pair<Building, Pair<Float, Float>>(build, new Pair<Float, Float>(x, y)));
         }
@@ -91,7 +91,7 @@ public class SpreadBlock extends XenoBlock {
                     gx = build.x + dx[i] * offset,
                     gy = build.y + dy[i] * offset;
                     
-                    if(validGrow(gx, gy)) continue;
+                    if(!validGrow(gx, gy)) continue;
                     
                     Tile tile = Vars.world.tileWorld(gx, gy);
                     if(tile == null || tile.block() instanceof XenoBlock) continue;
@@ -99,7 +99,7 @@ public class SpreadBlock extends XenoBlock {
                     tile.setBlock(rootBlock, this.team);
                     growPoint--;
                     if(tile.build instanceof XenoBuild) ((XenoBuild)tile.build).owner = this;
-                    add(tile.build, tile.x, tile.y);
+                    add(tile.build, tile.x * 8f, tile.y * 8f);
                 }
             }
         }
