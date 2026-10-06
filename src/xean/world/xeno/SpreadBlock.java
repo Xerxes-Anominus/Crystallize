@@ -99,7 +99,7 @@ public class SpreadBlock extends XenoBlock {
                     tile.setBlock(rootBlock, this.team);
                     growPoint--;
                     if(tile.build instanceof XenoBuild) ((XenoBuild)tile.build).owner = this;
-                    add(tile.build, tile.x * 8f, tile.y * 8f);
+                    add(tile.build, tile.x, tile.y);
                 }
             }
         }
