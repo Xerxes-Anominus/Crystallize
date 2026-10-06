@@ -66,7 +66,7 @@ public class Cryst_Planets {
             gen.ferricChance = 0f;
         });
         
-        virelith = new Planet("virelith", star, 0.95f) {{
+        virelith = new Planet("virelith", star, 0.95f, 3) {{
             generator = new PlanetGenerator() {};
             meshLoader = () -> new HexMesh(this, 4);
             cloudMeshLoader = () -> new MultiMesh(
