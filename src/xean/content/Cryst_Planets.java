@@ -24,10 +24,11 @@ public class Cryst_Planets {
     public static void load() {
         star = new Planet("star", null, 5.5f) {{
             bloom = true;
+            alwaysUnlocked = true;
             accessible = false;
             orbitRadius = 10000;
             
-            solarSystem = star;
+            solarSystem = this;
             
             meshLoader = () -> new SunMesh(
             this,
@@ -52,6 +53,8 @@ public class Cryst_Planets {
             gen.iceChance = 0f;
             gen.berylChance = 0.1f;
         });
+        anthos.solarSystem = star;
+        anthos.orbitRadius = 54;
         
         caqpode = makeAsteroid("caqpode", star, Blocks.air, Blocks.air, -4, 0.55f, 9, 1.3f, gen -> {
             gen.berylChance = 0.8f;
@@ -60,6 +63,8 @@ public class Cryst_Planets {
             gen.min = 20;
             gen.max = 30;
         });
+        caqpode.solarSystem = star;
+        caqpode.orbitRadius = 67;
         
         levos = makeAsteroid("levos", star, Blocks.stoneWall, Blocks.iceWall, -1, 0.5f, 12, 2f, gen -> {
             gen.berylChance = 0f;
@@ -67,6 +72,8 @@ public class Cryst_Planets {
             gen.carbonChance = 0.1f;
             gen.ferricChance = 0f;
         });
+        levos.solarSystem = star;
+        levos.orbitRadius = 102;
         
         virelith = new Planet("virelith", star, 0.95f, 3) {{
             generator = new PlanetGenerator() {};
@@ -83,6 +90,7 @@ public class Cryst_Planets {
             alwaysUnlocked = true;
             accessible = true;
             startSector = 41;
+            solarSystem = star;
             orbitRadius = 98;
             defaultCore = Blocks.coreAcropolis;
             
@@ -115,6 +123,7 @@ public class Cryst_Planets {
             alwaysUnlocked = false;
             accessible = false;
             orbitRadius = 27;
+            solarSystem = star;
         }};
     }
     
