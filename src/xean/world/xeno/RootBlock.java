@@ -52,7 +52,7 @@ public class RootBlock extends XenoBlock {
                     if(t == null) continue;
 
                     Building b = t.build;
-                    if(b != null && !(b.block instanceof RootBlock)) return false;
+                    if(b != null && b.block.solid) return false;
                 }
             }
             return true;
