@@ -54,7 +54,7 @@ public class Cryst_Planets {
             gen.berylChance = 0.1f;
         });
         anthos.solarSystem = star;
-        anthos.orbitRadius = 54;
+        anthos.orbitRadius = 24;
         
         caqpode = makeAsteroid("caqpode", star, Blocks.air, Blocks.air, -4, 0.55f, 9, 1.3f, gen -> {
             gen.berylChance = 0.8f;
@@ -64,7 +64,7 @@ public class Cryst_Planets {
             gen.max = 30;
         });
         caqpode.solarSystem = star;
-        caqpode.orbitRadius = 67;
+        caqpode.orbitRadius = 36;
         
         levos = makeAsteroid("levos", star, Blocks.stoneWall, Blocks.iceWall, -1, 0.5f, 12, 2f, gen -> {
             gen.berylChance = 0f;
@@ -73,14 +73,21 @@ public class Cryst_Planets {
             gen.ferricChance = 0f;
         });
         levos.solarSystem = star;
-        levos.orbitRadius = 102;
+        levos.orbitRadius = 67;
         
         virelith = new Planet("virelith", star, 0.95f, 3) {{
             generator = new PlanetGenerator() {};
-            meshLoader = () -> new HexMesh(this, 4);
+            
+            meshLoader = () -> new MultiMesh(
+            new NoiseMesh(this, 10, 4, Color.valueOf("bf00ff"), 0.96f, 2, 0.98f, 1.1f, 0.76f),
+            new SunMesh(this, 2, 2.8, 1.2, 1.4, 0.869, 1.22, 0.9f,
+            Color.valueOf("3f00ff"),
+            Color.valueOf("7f00ff")
+            ));
+            
             cloudMeshLoader = () -> new MultiMesh(
-            new HexSkyMesh(this, 3, 0.4f, 0.2f, 6, Color.valueOf("7f00ff").a(0.8f), 3, 0.5f, 1, 0.5f),
-            new HexSkyMesh(this, 4, 0.5f, 0.15f, 5, Color.valueOf("bf00ff").a(0.65f), 4, 0.44f, 1, 0.6f)
+            new HexSkyMesh(this, 3, 1.2f, 0.2f, 6, Color.valueOf("7f00ff").a(0.7f), 3, 0.5f, 1, 0.5f),
+            new HexSkyMesh(this, 4, -2f, 0.15f, 5, Color.valueOf("bf00ff").a(0.55f), 4, 0.44f, 1, 0.6f)
             );
             
             atmosphereColor = Color.valueOf("7f00ff").a(0.9f);
@@ -91,7 +98,7 @@ public class Cryst_Planets {
             accessible = true;
             startSector = 41;
             solarSystem = star;
-            orbitRadius = 98;
+            orbitRadius = 56;
             defaultCore = Blocks.coreAcropolis;
             
             allowLaunchLoadout = true;
@@ -122,7 +129,7 @@ public class Cryst_Planets {
         zenda = new Planet("zenda", virelith, 0.43f) {{
             alwaysUnlocked = false;
             accessible = false;
-            orbitRadius = 27;
+            orbitRadius = 9;
             solarSystem = star;
         }};
     }
