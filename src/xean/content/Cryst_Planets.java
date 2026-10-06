@@ -22,10 +22,12 @@ public class Cryst_Planets {
     star, anthos, caqpode, levos, virelith, zenda;
     
     public static void load() {
-        star = new Planet("star", Planets.sun, 5.5f) {{
+        star = new Planet("star", null, 5.5f) {{
             bloom = true;
             accessible = false;
             orbitRadius = 10000;
+            
+            solarSystem = star;
             
             meshLoader = () -> new SunMesh(
             this,
@@ -78,30 +80,31 @@ public class Cryst_Planets {
             atmosphereRadIn = 0.015f;
             atmosphereRadOut = 0.2f;
             
-            alwaysUnlocked = accessible = true;
+            alwaysUnlocked = true;
+            accessible = true;
             startSector = 41;
             orbitRadius = 98;
             defaultCore = Blocks.coreAcropolis;
             
             allowLaunchLoadout = true;
-            allowLaunchSchematics =
-            allowLaunchToNumbered =
+            allowLaunchSchematics = false;
+            allowLaunchToNumbered = false;
             allowSectorInvasion = false;
             
-            campaignRules.clearSectorOnLose =
-            campaignRules.pauseDisabled =
-            campaignRules.rtsAI = 
-            campaignRuleDefaults.clearSectorOnLose =
-            campaignRuleDefaults.pauseDisabled =
+            campaignRules.clearSectorOnLose = true;
+            campaignRules.pauseDisabled = true;
+            campaignRules.rtsAI = true;
+            campaignRuleDefaults.clearSectorOnLose = true;
+            campaignRuleDefaults.pauseDisabled = true;
             campaignRuleDefaults.rtsAI = true;
             showRtsAIRule = false;
             
             ruleSetter = rule -> {
-                rule.allowEditRules =
-                rule.allowEditWorldProcessors =
-                rule.allowEnvironmentDeconstruct =
-                rule.derelictRepair =
-                rule.disableUnitCap =
+                rule.allowEditRules = false;
+                rule.allowEditWorldProcessors = false;
+                rule.allowEnvironmentDeconstruct = false;
+                rule.derelictRepair = false;
+                rule.disableUnitCap = false;
                 rule.editor = false;
                 
                 rule.waveTeam = Team.get(14);
@@ -109,7 +112,8 @@ public class Cryst_Planets {
         }};
         
         zenda = new Planet("zenda", virelith, 0.43f) {{
-            alwaysUnlocked = accessible = false;
+            alwaysUnlocked = false;
+            accessible = false;
             orbitRadius = 27;
         }};
     }
