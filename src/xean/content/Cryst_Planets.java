@@ -23,6 +23,7 @@ public class Cryst_Planets {
     
     public static void load() {
         star = new Planet("star", null, 5.5f) {{
+            localizedName = "Norus";
             bloom = true;
             alwaysUnlocked = true;
             accessible = false;
@@ -94,11 +95,14 @@ public class Cryst_Planets {
             atmosphereRadIn = 0.015f;
             atmosphereRadOut = 0.2f;
             
+            localizedName = "Virelith";
             alwaysUnlocked = true;
             accessible = true;
             startSector = 41;
             solarSystem = star;
             orbitRadius = 56;
+            iconColor = Color.valueOf("7f00ff");
+            
             defaultCore = Blocks.coreAcropolis;
             
             allowLaunchLoadout = true;
@@ -131,6 +135,12 @@ public class Cryst_Planets {
             accessible = false;
             orbitRadius = 9;
             solarSystem = star;
+            
+            meshLoader = () -> new MultiMesh(
+            new NoiseMesh(this, 97, 3, Color.valueOf("c8c8c8"), 0.44f, 2, 0.9f, 1.1f, 1.32f),
+            new NoiseMesh(this, 45, 4, Color.valueOf("ebebeb"), 0.444f, 1, 0.8f, 0.8f, 1.19f),
+            new NoiseMesh(this ,182, 5, Color.valueOf("b2b2b2"), 0.4444f, 4, 0.99f, 1.27f, 0.9f)
+            );
         }};
     }
     
