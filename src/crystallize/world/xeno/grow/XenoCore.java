@@ -10,6 +10,10 @@ import arc.util.io.Reads;
 import arc.util.io.Writes;
 import crystallize.world.xeno.XenoBlock;
 import mindustry.Vars;
+import mindustry.content.Blocks;
+import mindustry.content.Fx;
+import mindustry.content.StatusEffects;
+import mindustry.content.UnitTypes;
 import mindustry.entities.Effect;
 import mindustry.entities.TargetPriority;
 import mindustry.gen.Building;
@@ -29,22 +33,22 @@ public class XenoCore extends XenoBlock {
         priority = TargetPriority.core;
     }
 
-    public UnitType miteType;
-    public float miteTime;
-    public float miteRadius;
-    public int mites;
-    public boolean miteOnDeath;
+    public UnitType miteType = UnitTypes.alpha;
+    public float miteTime = 30f * 60f;
+    public float miteRadius = 30f;
+    public int mites = 4;
+    public boolean miteOnDeath = true;
 
-    public Block rootType;
-    public float growPower;
+    public Block rootType = Blocks.conveyor;
+    public float growPower = 0.1f;
     public float maxGrow = 10f;
     
-    public StatusEffect infectStatus;
-    public float infectTime;
-    public float infectRadius;
-    public float infectChance;
-    public boolean transmittable;
-    public Effect infectEffect;
+    public StatusEffect infectStatus = StatusEffects.none;
+    public float infectTime = 10f * 60f;
+    public float infectRadius = 80f;
+    public float infectChance = 0f;
+    public boolean transmittable = false;
+    public Effect infectEffect = Fx.none;
 
     public class XenoCoreBuild extends XenoBuild {
         private float miteTimer;

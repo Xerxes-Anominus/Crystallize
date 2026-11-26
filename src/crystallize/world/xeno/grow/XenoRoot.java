@@ -26,7 +26,7 @@ public class XenoRoot extends XenoBlock {
     public float
     minGrowTime = 5f * 60f,
     maxGrowTime = 15f * 60f;
-    public int growDistance;
+    public int growDistance = 3;
 
     public void addGrow(Block block, float chance) {
         growList.add(new GrowEntry(block, chance));
