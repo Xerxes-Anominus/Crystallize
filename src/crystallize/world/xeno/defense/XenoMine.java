@@ -15,14 +15,6 @@ import mindustry.type.StatusEffect;
 import mindustry.world.meta.BlockGroup;
 
 public class XenoMine extends XenoBlock {
-    public float mineDamage = 50f;
-    public float mineRange = 40f;
-    public Sound mineSound = Sounds.explosion;
-    public Effect mineEffect = Fx.explosion;
-    public StatusEffect statusEffect = StatusEffects.slow;
-    public float statusDuration = 120f;
-    public float statusChance = 0.5f;
-
     public XenoMine(String name) {
         super(name);
         solid = false;
@@ -31,7 +23,15 @@ public class XenoMine extends XenoBlock {
         priority = TargetPriority.under;
         group = BlockGroup.none;
     }
-
+    
+    public float mineDamage = 50f;
+    public float mineRange = 40f;
+    public Sound mineSound = Sounds.explosion;
+    public Effect mineEffect = Fx.explosion;
+    public StatusEffect statusEffect = StatusEffects.slow;
+    public float statusDuration = 120f;
+    public float statusChance = 0.5f;
+    
     public class XenoMineBuild extends XenoBuild {
         private boolean active;
 
