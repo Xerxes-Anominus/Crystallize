@@ -9,7 +9,7 @@ public class InfectEffect extends StatusEffect {
         super(name);
     }
     
-    public Team team;
+    public Team team = Team.crux;
     
     @Override
     public void onRemoved(Unit unit) {
