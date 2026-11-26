@@ -7,6 +7,7 @@ import arc.util.io.Reads;
 import arc.util.io.Writes;
 import crystallize.world.xeno.XenoBlock;
 import mindustry.Vars;
+import mindustry.content.UnitTypes;
 import mindustry.entities.TargetPriority;
 import mindustry.graphics.Drawf;
 import mindustry.type.UnitType;
@@ -20,8 +21,8 @@ public class XenoHive extends XenoBlock {
         flags = EnumSet.of(BlockFlag.factory);
     }
     
-    public UnitType unitType;
-    public float productionTime;
+    public UnitType unitType = UnitTypes.alpha;
+    public float productionTime = 10f * 60f;
     
     public class XenoHiveBuild extends XenoBuild {
         private float productionTimer;
