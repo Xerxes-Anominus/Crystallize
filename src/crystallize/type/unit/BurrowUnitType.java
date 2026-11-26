@@ -59,6 +59,7 @@ public class BurrowUnitType extends XenoUnitType {
     public float jumpEnd = 0.3f, diveEnd = 0.5f;
 
     private final Mat animMat = new Mat();
+    private final Mat prevMat = new Mat();
 
     @Override
     public void init() {
@@ -227,7 +228,8 @@ public class BurrowUnitType extends XenoUnitType {
         if(scale <= 0.02f) return;
 
         float ox = unit.x, oy = unit.y, oe = unit.elevation;
-        Mat prev = Draw.trans();
+        
+        prevMat.set(Draw.trans());
 
         try {
             if(h > 0f) unit.elevation = Math.max(oe, Mathf.clamp(h / jumpHeight));
@@ -245,7 +247,8 @@ public class BurrowUnitType extends XenoUnitType {
 
             Draw.flush();
         } finally {
-            Draw.trans(prev);
+            Draw.flush();
+            Draw.trans(prevMat);
             unit.x = ox;
             unit.y = oy;
             unit.elevation = oe;

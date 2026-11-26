@@ -1,5 +1,7 @@
 package crystallize.type.unit;
 
+import mindustry.content.StatusEffects;
+import mindustry.content.Weathers;
 import mindustry.game.Team;
 import mindustry.gen.Unit;
 import mindustry.type.StatusEffect;
@@ -12,8 +14,8 @@ public class XenoUnitType extends UnitType {
         useUnitCap = false;
     }
     
-    public Weather weather;
-    public StatusEffect revealedEffect;
+    public Weather weather = Weathers.fog;
+    public StatusEffect revealedEffect = StatusEffects.none;
 
     protected boolean weatherHides() {
         return weather != null && weather.isActive();

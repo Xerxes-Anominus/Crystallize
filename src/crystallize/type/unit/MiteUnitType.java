@@ -3,6 +3,7 @@ package crystallize.type.unit;
 import crystallize.world.xeno.grow.XenoCoreZone;
 import crystallize.world.xeno.grow.XenoCore.XenoCoreBuild;
 import mindustry.Vars;
+import mindustry.content.Blocks;
 import mindustry.gen.Unit;
 import mindustry.world.Block;
 import mindustry.world.Tile;
@@ -12,7 +13,7 @@ public class MiteUnitType extends XenoUnitType {
         super(name);
     }
     
-    public Block core;
+    public Block core = Blocks.coreShard;
     
     @Override
     public void update(Unit unit) {
