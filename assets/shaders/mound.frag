@@ -31,6 +31,8 @@ vec2 rot(vec2 p, float a){
 }
 
 void main(){
+    float k  = max(u_radius / 12.0, 0.3);          // he so scale theo kich thuoc don vi
+    vec2  vs = v_local / k;                         // toa do da chuan hoa de chi tiet scale theo don vi
     vec2 p = rot(v_local, -u_angle);                  // x doc theo huong di
     float stretch = 1.0 + 0.55 * u_speed;
     vec2 q = vec2(p.x / (u_radius * stretch), p.y / u_radius);
@@ -38,7 +40,7 @@ void main(){
     float d = length(q);
 
     // rung nhe va meo vien de go dat trong "song"
-    float wob = noise(v_local * 0.35 + u_time * 1.3);
+    float wob = noise(vs * 0.35 + u_time * 1.3);
     d += (wob - 0.5) * 0.14;
 
     // --- hinh vom ---
@@ -69,11 +71,11 @@ void main(){
     float behind = smoothstep(0.0, -1.0, p.x / u_radius);
     float furrow = (1.0 - smoothstep(0.0, 0.45, abs(p.y) / u_radius)) * behind
                  * (1.0 - smoothstep(0.0, 2.2, -p.x / u_radius)) * u_speed;
-    float fl = 0.5 + 0.5 * sin(p.x * 0.9 + u_time * 1.2);
+    float fl = 0.5 + 0.5 * sin(p.x / k * 0.9 + u_time * 1.2);
     float furrowA = furrow * (0.12 + 0.14 * fl);
 
     // --- hat bui ---
-    float spk = step(0.93, hash21(floor(v_local * 1.5) + floor(u_time * 6.0))) * dome;
+    float spk = step(0.93, hash21(floor(vs * 1.5) + floor(u_time * 6.0))) * dome;
 
     vec3 outRgb = col;
     float a = alpha;
