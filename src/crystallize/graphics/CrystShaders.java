@@ -54,7 +54,7 @@ public class CrystShaders {
         public float radius = 12f;
         public float power = 1f;
         public float speed = 0f;
-        public float angle = 0f; // do
+        public float angle = 0f;
         public final Color color = new Color(0.4f, 0.33f, 0.25f, 1f);
 
         public MoundShader() {
