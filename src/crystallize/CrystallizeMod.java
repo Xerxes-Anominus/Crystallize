@@ -9,6 +9,7 @@ import arc.struct.ObjectMap;
 import arc.struct.Seq;
 import arc.util.Tmp;
 import crystallize.ai.MiteAI;
+import crystallize.graphics.CrystShaders;
 import crystallize.type.InfectEffect;
 import crystallize.type.unit.BurrowUnitType;
 import crystallize.type.unit.MiteUnitType;
@@ -17,6 +18,7 @@ import crystallize.type.unit.XenoUnitType;
 import crystallize.world.block.defense.LandMine;
 import crystallize.world.block.production.RampDrill;
 import crystallize.world.xeno.XenoBlock;
+import crystallize.world.xeno.defense.XenoMender;
 import crystallize.world.xeno.defense.XenoMine;
 import crystallize.world.xeno.defense.XenoProjector;
 import crystallize.world.xeno.grow.XenoCore;
@@ -52,6 +54,7 @@ public class CrystallizeMod extends Mod {
         put("XenoProjector", XenoProjector.class);
         put("XenoMine", XenoMine.class);
         put("XenoHive", XenoHive.class);
+        put("XenoMender", XenoMender.class);
         
         put("RampDrill", RampDrill.class);
         put("LandMine", LandMine.class);
@@ -68,6 +71,8 @@ public class CrystallizeMod extends Mod {
     
     @Override
     public void init() {
+        CrystShaders.init();
+        
         Events.on(SectorCaptureEvent.class, event -> {
             if(Vars.state.isCampaign() && Vars.state.rules.planet == CrystPlanets.virelith) {
                 Vars.state.rules.waveSending = false;
