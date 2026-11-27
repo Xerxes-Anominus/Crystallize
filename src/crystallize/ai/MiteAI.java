@@ -10,7 +10,7 @@ import mindustry.entities.units.AIController;
 import mindustry.world.Tile;
 
 public class MiteAI extends AIController {
-    public class MitePathfinder extends Pathfinder {
+    public static class MitePathfinder extends Pathfinder {
         public static int coreTile = -1;
         
         public static class CoreZoneField extends Flowfield {
@@ -29,6 +29,8 @@ public class MiteAI extends AIController {
         }
         
         public static void addonFieldTypes() {
+            if(coreTile != -1) return;
+            coreTile = Pathfinder.fieldTypes.size;
             Pathfinder.fieldTypes.add(CoreZoneField::new);
         }
     }
