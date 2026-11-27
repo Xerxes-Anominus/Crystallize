@@ -9,18 +9,22 @@ import arc.struct.ObjectMap;
 import arc.struct.Seq;
 import arc.util.Tmp;
 import crystallize.ai.MiteAI;
+import crystallize.ai.StealthAI;
 import crystallize.graphics.CrystShaders;
 import crystallize.type.InfectEffect;
 import crystallize.type.unit.BurrowUnitType;
 import crystallize.type.unit.MiteUnitType;
 import crystallize.type.unit.StealthUnitType;
 import crystallize.type.unit.XenoUnitType;
+import crystallize.world.draw.DrawXenoTurret;
 import crystallize.world.block.defense.LandMine;
 import crystallize.world.block.production.RampDrill;
 import crystallize.world.xeno.XenoBlock;
 import crystallize.world.xeno.defense.XenoMender;
 import crystallize.world.xeno.defense.XenoMine;
 import crystallize.world.xeno.defense.XenoProjector;
+import crystallize.world.xeno.defense.XenoTurret;
+import crystallize.world.xeno.defense.XenoWeather;
 import crystallize.world.xeno.grow.XenoCore;
 import crystallize.world.xeno.grow.XenoCoreZone;
 import crystallize.world.xeno.grow.XenoRoot;
@@ -55,6 +59,8 @@ public class CrystallizeMod extends Mod {
         put("XenoMine", XenoMine.class);
         put("XenoHive", XenoHive.class);
         put("XenoMender", XenoMender.class);
+        put("XenoTurret", XenoTurret.class);
+        put("XenoWeather", XenoWeather.class);
         
         put("RampDrill", RampDrill.class);
         put("LandMine", LandMine.class);
@@ -65,8 +71,18 @@ public class CrystallizeMod extends Mod {
         put("BurrowUnitType", BurrowUnitType.class);
         
         put("MiteAI", MiteAI.class);
+        put("StealthAI", StealthAI.class);
+
+        put("DrawXenoTurret", DrawXenoTurret.class);
         
         put("InfectEffect", InfectEffect.class);
+
+        MiteAI.MitePathfinder.addonFieldTypes();
+    }
+
+    @Override
+    public void loadContent() {
+        CrystPlanets.load();
     }
     
     @Override
@@ -88,7 +104,7 @@ public class CrystallizeMod extends Mod {
         ClassMap.classes.put(key, value);
     }
     
-    private class CrystPlanets {
+    private static class CrystPlanets {
         private static Planet
         norus, anthos, caqpode, levos, virelith, zenda;
     
