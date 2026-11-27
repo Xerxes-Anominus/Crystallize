@@ -1,8 +1,8 @@
 package crystallize.type.unit;
 
-import mindustry.game.Team;
 import mindustry.gen.Unit;
 
+/** Tang hinh vinh vien: chi hien khi dinh revealedEffect, khong phu thuoc thoi tiet. */
 public class StealthUnitType extends XenoUnitType {
     public StealthUnitType(String name) {
         super(name);
@@ -14,7 +14,7 @@ public class StealthUnitType extends XenoUnitType {
     }
 
     @Override
-    public boolean targetable(Unit unit, Team targetter) {
-        return unit.hasEffect(revealedEffect);
+    public boolean isCloaked(Unit unit) {
+        return !unit.hasEffect(revealedEffect);
     }
 }
