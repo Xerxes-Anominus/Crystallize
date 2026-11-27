@@ -68,7 +68,7 @@ public class XenoRoot extends XenoBlock {
         
         private boolean clear(int lowX, int lowY, int s) {
             for(int dx = -growDistance; dx < s + growDistance; dx++) {
-                for(int dy = -growDistance; dy < s + growDistance; dx++) {
+                for(int dy = -growDistance; dy < s + growDistance; dy++) {
                     Tile t = Vars.world.tile(dx + lowX, dy + lowY);
                     if(t == null || t.build == null) continue;
                     if(t.build instanceof XenoBuild && !(t.build instanceof XenoRootBuild)) return false;
@@ -156,6 +156,8 @@ public class XenoRoot extends XenoBlock {
     public static class GrowEntry {
         public Block block;
         public float chance;
+
+        public GrowEntry() {}
 
         public GrowEntry(Block block, float chance) {
             this.block = block;
