@@ -14,37 +14,34 @@ import mindustry.world.meta.BlockGroup;
 import mindustry.world.meta.Stat;
 import mindustry.world.meta.StatUnit;
 import crystallize.type.unit.BurrowUnitType;
+import crystallize.world.meta.CrystStat;
 
 public class LandMine extends Block {
-    // Bán kính chạm để kích hoạt (pixel)
-    public float triggerRadius = 10f;
-    // Bán kính nổ
-    public float blastRadius = 40f;
-    // Sát thương lên BurrowUnitType đang ở dưới đất
-    public float burrowDamage = 600f;
-    // Tỉ lệ sát thương lên đơn vị mặt đất khác (0.25 = 25%)
-    public float groundDamageFraction = 0.25f;
-    // Bán kính kích nổ dây chuyền và độ trễ (tick)
-    public float chainRadius = 56f;
-    public float chainDelay = 6f;
-    public float shake = 4f;
-    public Effect blastEffect = Fx.blastExplosion;
-
     public LandMine(String name) {
         super(name);
         update = true;
-        solid = false;          // đơn vị mặt đất đi qua bình thường
+        solid = false;
         underBullets = true;
         hasShadow = false;
         group = BlockGroup.none;
         destroyEffect = Fx.none;
     }
+    
+    public float triggerRadius = 10f;
+    public float blastRadius = 40f;
+    public float burrowDamage = 600f;
+    public float groundDamageFraction = 0.25f;
+    public float chainRadius = 56f;
+    public float chainDelay = 6f;
+    public float shake = 4f;
+    public Effect blastEffect = Fx.blastExplosion;
 
     @Override
     public void setStats() {
         super.setStats();
         stats.add(Stat.damage, burrowDamage, StatUnit.none);
         stats.add(Stat.range, blastRadius / Vars.tilesize, StatUnit.blocks);
+        stats.add(CrystStat.groundDamageMultiplier, groundDamageFraction * 100f, StatUnit.percent);
     }
 
     @Override
@@ -61,7 +58,6 @@ public class LandMine extends Block {
         @Override
         public void updateTile() {
             if(triggered) return;
-            // Quét mỗi 3 tick cho nhẹ
             if(((int)Time.time + id) % 3 != 0) return;
 
             float r = triggerRadius;
@@ -75,8 +71,7 @@ public class LandMine extends Block {
 
             if(hit[0]) detonate();
         }
-
-        /** Gọi từ mine khác để kích nổ dây chuyền. */
+        
         public void detonate() {
             if(triggered || !isValid()) return;
             triggered = true;
@@ -87,7 +82,6 @@ public class LandMine extends Block {
                 if(!u.isValid() || !u.within(this, r)) return;
 
                 if(u.type instanceof BurrowUnitType b && b.isBurrowed(u)) {
-                    // Trừ thẳng máu để bỏ qua miễn nhiễm của trạng thái burrowed
                     u.health -= burrowDamage;
                     if(u.health <= 0f) u.kill();
                 } else if(u.isGrounded()) {
@@ -97,8 +91,7 @@ public class LandMine extends Block {
 
             blastEffect.at(x, y, r / Vars.tilesize);
             Effect.shake(shake, shake * 2f, x, y);
-
-            // Kích nổ các LandMine gần đó (có độ trễ để tránh đệ quy sâu)
+            
             Vars.indexer.eachBlock(team, x, y, chainRadius,
                 b -> b instanceof LandMineBuild m && m != this && !m.triggered,
                 b -> Time.run(chainDelay, () -> {
