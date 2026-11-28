@@ -4,11 +4,13 @@ import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.math.Rand;
 import arc.math.geom.Mat3D;
+import arc.math.geom.Vec3;
 import arc.struct.Seq;
 import arc.util.Tmp;
 import mindustry.content.Blocks;
 import mindustry.game.Team;
 import mindustry.graphics.g3d.GenericMesh;
+import mindustry.graphics.g3d.HexMesh;
 import mindustry.graphics.g3d.HexSkyMesh;
 import mindustry.graphics.g3d.MatMesh;
 import mindustry.graphics.g3d.MultiMesh;
@@ -52,10 +54,10 @@ public class CrystPlanets {
             Color.valueOf("ffbfff")
             ),
             
-            makeRing(this, 300,
+            makeRing(this, 2400,
             BELT_CENTER + BELT_ORBIT_OFFSET - BELT_HALF_WIDTH,
             BELT_CENTER + BELT_ORBIT_OFFSET + BELT_HALF_WIDTH,
-            0.5f, 0.04f, 0.15f, 0f, 9001,
+            0.5f, 0.04f, 0.32f, 0f, 9001,
             "6e6660", "8a7f74", "4f4a46", "a09284", "5b3f35")
             );
         }};
@@ -172,6 +174,7 @@ public class CrystPlanets {
         }};
         
         zenda = new Planet("zenda", virelith, 0.43f) {{
+            localizedName = "Zenda";
             alwaysUnlocked = false;
             accessible = false;
             orbitRadius = 9;
@@ -199,7 +202,7 @@ public class CrystPlanets {
             new NoiseMesh(this, 211, 5, Color.valueOf("a8744a"), 2.21f, 3, 0.8f, 0.9f, 0.4f),
             new NoiseMesh(this, 223, 5, Color.valueOf("e8d4b0"), 2.22f, 2, 0.95f, 0.5f, 0.35f),
             
-            makeRing(this, 260, 3.0f, 4.6f, 0.03f, 0.025f, 0.06f, 20f, 7001,
+            makeRing(this, 720, 3.0f, 4.6f, 0.03f, 0.02f, 0.12f, 45f, 7001,
             "e8d4b0", "d9c7a0", "b89a70", "f5e6c8", "8a6a4a")
             );
 
@@ -226,12 +229,18 @@ public class CrystPlanets {
             orbitRadius = 108;
             solarSystem = norus;
             
-            meshLoader = () -> new NoiseMesh(
-            this, 301, 5, radius, 2, 0.9f, 0.6f, 20f,
-            Color.valueOf("2a5f86"), Color.valueOf("9a1fe0"), 3, 0.6f, 0.9f, 0.42f
-            );
-            
-            cloudMeshLoader = () -> new HexSkyMesh(this, 9, 0.9f, 0.04f, 6, Color.valueOf("ff3fff").a(0.9f), 3, 0.5f, 1.2f, 0.7f);
+            generator = new PlanetGenerator() {
+                @Override
+                public float getHeight(Vec3 position) {
+                    return 0f;
+                }
+                
+                public Color getColor(Vec3 position) {
+                    return sequoColor(position);
+                }
+            };
+
+            meshLoader = () -> new HexMesh(this, 6);
 
             atmosphereColor = Color.valueOf("7f00ff").a(0.8f);
             atmosphereRadIn = 0.02f;
@@ -263,6 +272,33 @@ public class CrystPlanets {
             );
         }};
     }
+
+    private static final Color
+    SEQ_PURPLE_A = Color.valueOf("7f00ff"), SEQ_PURPLE_B = Color.valueOf("bf00ff"),
+    SEQ_BLUE_A = Color.valueOf("2a5f86"), SEQ_BLUE_B = Color.valueOf("3f8fb0"),
+    SEQ_PINK = Color.valueOf("ff3fff");
+    
+    private static Color sequoColor(Vec3 position) {
+        Vec3 p = Tmp.v31.set(position).nor();
+        float x = p.x, y = p.y, z = p.z;
+
+        float warp = 0.5f * Mathf.sin(3.1f * x + 1.7f * y + 2.3f * z)
+        + 0.3f * Mathf.sin(2.3f * x - 3.7f * y + 1.1f * z + 1.3f)
+        + 0.2f * Mathf.sin(1.3f * x + 2.9f * y - 3.3f * z + 2.1f);
+        float band = Mathf.sin(y * 6f + warp * 2.2f);
+        float spot = (Mathf.sin(5.3f * x + 0.7f) + Mathf.sin(4.1f * y + 2f)
+        + Mathf.sin(6.7f * z + 1.1f) + Mathf.sin(3.7f * x + 4.3f * z + 0.4f)) / 4f;
+
+        float shade = Mathf.clamp(band * 0.5f + 0.5f);
+
+        if(spot > 0.533f){
+            return Tmp.c1.set(SEQ_PINK);
+        }else if(band > -0.544f){
+            return Tmp.c1.set(SEQ_PURPLE_A).lerp(SEQ_PURPLE_B, shade);
+        }else{
+            return Tmp.c1.set(SEQ_BLUE_A).lerp(SEQ_BLUE_B, Mathf.clamp(warp * 0.5f + 0.5f));
+        }
+    }
     
     private static GenericMesh makeRing(Planet host, int count, float inner, float outer, float thickness,
                                         float minSize, float maxSize, float tilt, int noiseSeed, String... palette) {
@@ -272,7 +308,7 @@ public class CrystPlanets {
 
         for(int i = 0; i < count; i++){
             float ang = rand.random(Mathf.PI2);
-            float d = rand.random(inner, outer);
+            float d = Mathf.sqrt(rand.random(inner * inner, outer * outer));
             float x = Mathf.cos(ang) * d;
             float z = Mathf.sin(ang) * d;
             float y = rand.range(thickness);
@@ -280,10 +316,15 @@ public class CrystPlanets {
             float ty = y * cos - z * sin;
             float tz = y * sin + z * cos;
 
-            Color c = Color.valueOf(palette[rand.random(palette.length - 1)]);
+            Color c1 = Color.valueOf(palette[rand.random(palette.length - 1)]);
+            Color c2 = Color.valueOf(palette[rand.random(palette.length - 1)]);
+
+            float t = rand.random(1f);
+            float size = minSize + (maxSize - minSize) * t * t * t;
 
             meshes.add(new MatMesh(
-            new NoiseMesh(host, noiseSeed + i + 1, 1, c, rand.random(minSize, maxSize), 1, 0.6f, 0.38f, 0.6f),
+            new NoiseMesh(host, noiseSeed + i + 1, 1, size, 2, 0.6f, 0.38f, 20f,
+            c1, c2, 3, 0.6f, 0.38f, 0.5f),
             new Mat3D().setToTranslation(Tmp.v31.set(x, ty, tz))
             ));
         }
