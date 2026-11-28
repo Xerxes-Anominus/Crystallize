@@ -1,10 +1,15 @@
 package crystallize.world.block.production;
 
+import arc.Core;
 import arc.math.Mathf;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
+import crystallize.world.meta.CrystStat;
 import mindustry.entities.Effect;
+import mindustry.graphics.Pal;
+import mindustry.ui.Bar;
 import mindustry.world.blocks.production.BurstDrill;
+import mindustry.world.meta.StatUnit;
 
 public class RampDrill extends BurstDrill {
     public RampDrill(String name) {
@@ -13,6 +18,25 @@ public class RampDrill extends BurstDrill {
     
     public float maxBoost = 3f;
     public float boostPower = 0.25f;
+    
+    @Override
+    public void setStats() {
+        super.setStats();
+        
+        stats.add(CrystStat.maxBoost, maxBoost * 100f, StatUnit.percent);
+        stats.add(CrystStat.boostPower, boostPower * 100f, StatUnit.percent);
+    }
+    
+    @Override
+    public void setBars() {
+        super.setBars();
+        
+        addBar("ramp-progress", build -> new Bar(
+        () -> Core.bundle.get("bar.ramp-progress.name") + ": " + ((((RampDrillBuild)build).boosted - 1f) / (maxBoost - 1f)) + "%",
+        () -> Pal.accent,
+        () -> (((RampDrillBuild)build).boosted - 1f) / (maxBoost - 1f)
+        ));
+    }
 
     public class RampDrillBuild extends BurstDrillBuild {
         public float boosted = 1f;
